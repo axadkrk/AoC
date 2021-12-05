@@ -550,27 +550,7 @@ private fun map(stringLines: Array<String>) {
                     array[x][line.y1]++
                 }
         } else {
-
             drawDiagonalNew(line, array)
-
-//            if (line.x1 > line.x2) {
-//                if (line.y1 > line.y2) {
-////                    println(line)
-//                    drawDiagonalY2(line.x2, line.x1, line.y2, line.y1, array)
-//                } else {
-////                    println(line)
-//                    drawDiagonalY(line.x2, line.x1, line.y1, line.y2, array)
-//                }
-//            } else {
-//                if (line.y1 > line.y2) {
-////                    println(line)
-//                    drawDiagonalX2(line.x1, line.x2, line.y2, line.y1, array)
-//                } else {
-////                    println(line)
-//                    drawDiagonalX(line.x1, line.x2, line.y1, line.y2, array)
-//                }
-//            }
-
         }
     }
     var countLines = 0;
@@ -583,25 +563,10 @@ private fun map(stringLines: Array<String>) {
         }
     }
 
-//    val array2 = rotateCW(array);
-
-//    if (array2 != null)
-//        for (x in array2.indices) {
-//            for (y in array2[x].size - 1 downTo 0) {
-//                val num = array2[x][y];
-//                if (num == 0)
-//                    print(". ")
-//                else
-//                    print("$num ")
-//            }
-//            println()
-//        }
-
     println(countLines)
 }
 
 fun drawDiagonalNew(line: Line, array: Array<IntArray>) {
-//    println(line)
     val x1 = line.x1
     val y1 = line.y1
     val x2 = line.x2
@@ -613,7 +578,6 @@ fun drawDiagonalNew(line: Line, array: Array<IntArray>) {
     val length = abs(x1 - x2);
 
     for (i in 0..length) {
-//        println("$x $y")
         array[x][y]++
 
         if (x1 > x2) {
@@ -627,65 +591,6 @@ fun drawDiagonalNew(line: Line, array: Array<IntArray>) {
             y++
         }
     }
-
-}
-
-private fun drawDiagonalX(x1: Int, x2: Int, y1: Int, y2: Int, array: Array<IntArray>) {
-    val test1 = x2 - x1
-    val test2 = y2 - y1
-    if (test1 == test2) {
-        for (x in x1..x2) {
-            array[x][x]++
-        }
-    }
-
-}
-
-private fun drawDiagonalX2(x1: Int, x2: Int, y1: Int, y2: Int, array: Array<IntArray>) {
-    val test1 = x2 - x1
-    val test2 = y2 - y1
-    if (test1 == test2) {
-        var j = y2;
-        for (i in x1..x2) {
-
-            array[i][j]++
-            j--
-        }
-
-    }
-
-}
-
-private fun drawDiagonalY(x1: Int, x2: Int, y1: Int, y2: Int, array: Array<IntArray>) {
-    val test1 = x2 - x1
-    val test2 = y2 - y1
-    if (test1 == test2) {
-
-        var i = x2;
-        var j = y1;
-        for (x in y1..y2) {
-//            println("$i $j")
-            array[i][j]++
-            i--
-            j++
-        }
-    }
-
-}
-
-private fun drawDiagonalY2(x1: Int, x2: Int, y1: Int, y2: Int, array: Array<IntArray>) {
-    val test1 = x2 - x1
-    val test2 = y2 - y1
-    if (test1 == test2) {
-
-        var j = y2;
-        for (i in x2 downTo x1) {
-//            println("$i $j")
-            array[i][j]++
-            j--
-        }
-    }
-
 }
 
 class Line(line: String) {
@@ -693,7 +598,6 @@ class Line(line: String) {
     var y1 = 0
     var x2 = 0
     var y2 = 0
-
 
     init {
         val split = line.split(" -> ")
@@ -708,16 +612,4 @@ class Line(line: String) {
     override fun toString(): String {
         return "$x1 $y1 -> $x2 $y2"
     }
-}
-
-fun rotateCW(mat: Array<IntArray>): Array<IntArray>? {
-    val M = mat.size
-    val N: Int = mat[0].size
-    val ret = Array(N) { IntArray(M) }
-    for (r in 0 until M) {
-        for (c in 0 until N) {
-            ret[c][M - 1 - r] = mat[r][c]
-        }
-    }
-    return ret
 }
