@@ -1,0 +1,4 @@
+.gradle
+.idea
+/adventofcode21/build
+/adventofcode21/gradle
