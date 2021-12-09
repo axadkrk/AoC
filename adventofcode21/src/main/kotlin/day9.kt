@@ -1,10 +1,6 @@
 fun main() {
     val testData = arrayOf(
-        "2199943210",
-        "3987894921",
-        "9856789892",
-        "8767896789",
-        "9899965678"
+        "2199943210", "3987894921", "9856789892", "8767896789", "9899965678"
     )
 
     val realData = arrayOf(
@@ -110,22 +106,267 @@ fun main() {
         "4345896595432124588998765545987674567899999876345987658987659767896431239109876543456789432101299965"
     )
     // Part 1
-    calcLowpoint1(testData)
-    calcLowpoint1(realData)
+
+    val testDataInt = testData.map { line -> line.map { value -> value.toString().toInt() } }
+    val realDataInt = realData.map { line -> line.map { value -> value.toString().toInt() } }
+
+    calcLowPoint1(testDataInt)
+    calcLowPoint1(realDataInt)
 
     // Part 2
 //    calcLowpoint2(testData)
 //    calcLowpoint2(realData)
 }
 
-fun calcLowpoint1(data: Array<String>) {
-    val xLength = data.size;
-    val yLength = data[0].length
-    println()
+fun calcLowPoint1(data: List<List<Int>>): MutableList<Int> {
+    val xLength = data.size
+    val yLength = data[0].size
+
+    val lowPoints = mutableListOf<Int>()
+
+    val basins = mutableListOf<Array<IntArray>>()
+
+    for (x in 0 until xLength) {
+        for (y in 0 until yLength) {
+            when (x) {
+                0 -> {
+                    when (y) {
+                        0 -> {
+                            val east = data[1][y]
+                            val south = data[x][1]
+
+                            val value = data[x][y]
+                            if (east > value && south > value) {
+                                lowPoints.add(value)
+                                val pos = Array(xLength) { IntArray(yLength) }
+                                searchBasil(x, y, data, pos)
+                                basins.add(pos)
+                            }
+                        }
+                        yLength - 1 -> {
+                            val north = data[x][y - 1]
+                            val east = data[1][y]
+
+                            val value = data[x][y]
+
+                            if (north > value && east > value) {
+                                lowPoints.add(value)
+                                val pos = Array(xLength) { IntArray(yLength) }
+                                searchBasil(x, y, data, pos)
+                                basins.add(pos)
+                            }
+                        }
+                        else -> {
+                            val north = data[x][y - 1]
+                            val east = data[1][y]
+                            val south = data[x][y + 1]
+
+                            val value = data[x][y]
+                            if (north > value && east > value && south > value) {
+                                lowPoints.add(value)
+                                val pos = Array(xLength) { IntArray(yLength) }
+                                searchBasil(x, y, data, pos)
+                                basins.add(pos)
+                            }
+
+                        }
+                    }
+                }
+                xLength - 1 -> {
+                    when (y) {
+                        0 -> {
+                            val west = data[x - 1][y]
+                            val south = data[x][1]
+
+                            val value = data[x][y]
+                            if (south > value && west > value) {
+                                lowPoints.add(value)
+                                val pos = Array(xLength) { IntArray(yLength) }
+                                searchBasil(x, y, data, pos)
+                                basins.add(pos)
+                            }
+                        }
+                        yLength - 1 -> {
+                            val north = data[x][y - 1]
+                            val west = data[x - 1][y]
+
+                            val value = data[x][y]
+                            if (north > value && west > value) {
+                                lowPoints.add(value)
+                                val pos = Array(xLength) { IntArray(yLength) }
+                                searchBasil(x, y, data, pos)
+                                basins.add(pos)
+                            }
+                        }
+                        else -> {
+                            val north = data[x][y - 1]
+                            val south = data[x][y + 1]
+                            val west = data[x - 1][y]
+
+                            val value = data[x][y]
+                            if (north > value && south > value && west > value) {
+                                lowPoints.add(value)
+                                val pos = Array(xLength) { IntArray(yLength) }
+                                searchBasil(x, y, data, pos)
+                                basins.add(pos)
+                            }
+                        }
+                    }
+                }
+                else -> {
+
+                    when (y) {
+                        0 -> {
+                            val east = data[x + 1][y]
+                            val south = data[x][1]
+                            val west = data[x - 1][y]
+
+                            val value = data[x][y]
+
+                            if (east > value && south > value && west > value) {
+                                lowPoints.add(value)
+                                val pos = Array(xLength) { IntArray(yLength) }
+                                searchBasil(x, y, data, pos)
+                                basins.add(pos)
+                            }
+                        }
+                        yLength - 1 -> {
+                            val north = data[x][y - 1]
+                            val east = data[x + 1][y]
+                            val west = data[x - 1][y]
+
+                            val value = data[x][y]
+
+                            if (north > value && east > value && west > value) {
+                                lowPoints.add(value)
+                                val pos = Array(xLength) { IntArray(yLength) }
+                                searchBasil(x, y, data, pos)
+                                basins.add(pos)
+                            }
+                        }
+                        else -> {
+                            val north = data[x][y - 1]
+                            val east = data[x + 1][y]
+                            val south = data[x][y + 1]
+                            val west = data[x - 1][y]
+
+                            val value = data[x][y]
+
+                            if (north > value && east > value && south > value && west > value) {
+                                lowPoints.add(value)
+                                val pos = Array(xLength) { IntArray(yLength) }
+                                searchBasil(x, y, data, pos)
+                                basins.add(pos)
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    }
+
+    val newValues = lowPoints.map { value -> value + 1 }
+    println(newValues.sum())
+
+    calcMarkedData(basins)
+    return lowPoints
 }
 
-fun calcLowpoint2(data: Array<String>) {
+fun calcMarkedData(basins: MutableList<Array<IntArray>>) {
+    // find 3 min
+    basins.sortBy { basin -> sizeOf(basin) }
+    var sum = 0
+    for (i in basins.size - 3 until basins.size) {
+        if (sum == 0) {
+            sum = sizeOf(basins[i])
+        } else {
+            sum *= sizeOf(basins[i])
+        }
+    }
+    println("Sum of Basils: $sum")
 
 }
+
+fun sizeOf(basin: Array<IntArray>): Int {
+    return basin.sumOf { line -> line.sum() }
+}
+
+fun searchBasil(x: Int, y: Int, data: List<List<Int>>, marked: Array<IntArray>) {
+    marked[x][y] = 1
+
+    val xLength = data.size
+    val yLength = data[0].size
+    when (x) {
+        0 -> {
+            when (y) {
+                0 -> {
+
+
+                    if (marked[1][y] == 0 && data[1][y] != 9) searchBasil(1, y, data, marked)
+                    if (marked[x][1] == 0 && data[x][1] != 9) searchBasil(x, 1, data, marked)
+                }
+                yLength - 1 -> {
+
+
+                    marked[x][y] = 1
+                    if (marked[x][y - 1] == 0 && data[x][y - 1] != 9) searchBasil(x, y - 1, data, marked)
+                    if (marked[1][y] == 0 && data[1][y] != 9) searchBasil(1, y, data, marked)
+                }
+                else -> {
+
+
+                    marked[x][y] = 1
+                    if (marked[x][y - 1] == 0 && data[x][y - 1] != 9) searchBasil(x, y - 1, data, marked)
+                    if (marked[1][y] == 0 && data[1][y] != 9) searchBasil(1, y, data, marked)
+                    if (marked[x][y + 1] == 0 && data[x][y + 1] != 9) searchBasil(x, y + 1, data, marked)
+                }
+
+
+            }
+        }
+        xLength - 1 -> {
+            when (y) {
+                0 -> {
+                    if (marked[x][y + 1] == 0 && data[x][y + 1] != 9) searchBasil(x, y + 1, data, marked)
+                    if (marked[x - 1][y] == 0 && data[x - 1][y] != 9) searchBasil(x - 1, y, data, marked)
+                }
+                yLength - 1 -> {
+                    if (marked[x][y - 1] == 0 && data[x][y - 1] != 9) searchBasil(x, y - 1, data, marked)
+                    if (marked[x - 1][y] == 0 && data[x - 1][y] != 9) searchBasil(x - 1, y, data, marked)
+                }
+                else -> {
+                    if (marked[x][y - 1] == 0 && data[x][y - 1] != 9) searchBasil(x, y - 1, data, marked)
+                    if (marked[x][y + 1] == 0 && data[x][y + 1] != 9) searchBasil(x, y + 1, data, marked)
+                    if (marked[x - 1][y] == 0 && data[x - 1][y] != 9) searchBasil(x - 1, y, data, marked)
+                }
+            }
+        }
+        else -> {
+
+            when (y) {
+                0 -> {
+
+                    if (marked[x + 1][y] == 0 && data[x + 1][y] != 9) searchBasil(x + 1, y, data, marked)
+                    if (marked[x][y + 1] == 0 && data[x][y + 1] != 9) searchBasil(x, y + 1, data, marked)
+                    if (marked[x - 1][y] == 0 && data[x - 1][y] != 9) searchBasil(x - 1, y, data, marked)
+                }
+                yLength - 1 -> {
+
+                    if (marked[x][y - 1] == 0 && data[x][y - 1] != 9) searchBasil(x, y - 1, data, marked)
+                    if (marked[x + 1][y] == 0 && data[x + 1][y] != 9) searchBasil(x + 1, y, data, marked)
+                    if (marked[x - 1][y] == 0 && data[x - 1][y] != 9) searchBasil(x - 1, y, data, marked)
+                }
+                else -> {
+
+                    if (marked[x][y - 1] == 0 && data[x][y - 1] != 9) searchBasil(x, y - 1, data, marked)
+                    if (marked[x + 1][y] == 0 && data[x + 1][y] != 9) searchBasil(x + 1, y, data, marked)
+                    if (marked[x][y + 1] == 0 && data[x][y + 1] != 9) searchBasil(x, y + 1, data, marked)
+                    if (marked[x - 1][y] == 0 && data[x - 1][y] != 9) searchBasil(x - 1, y, data, marked)
+                }
+            }
+        }
+    }
+}
+
 
 
