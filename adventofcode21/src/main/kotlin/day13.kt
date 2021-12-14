@@ -1104,14 +1104,12 @@ fun foldY(map: Array<IntArray>, value: Int): Array<IntArray> {
                     val i1 = value - i
                     newMap[x][i1] = 1
                 }
-
             } else {
                 if (map[x][y] == 1) {
                     newMap[x][y] = 1
                 }
             }
         }
-
     }
     printDotSize(newMap)
     return newMap
@@ -1120,9 +1118,8 @@ fun foldY(map: Array<IntArray>, value: Int): Array<IntArray> {
 private fun printMap(map: Array<IntArray>) {
     for (y in 0 until map[0].size) {
         for (element in map) {
-
             if (element[y] == 0)
-                print(".")
+                print(" ")
             else
                 print("#")
         }

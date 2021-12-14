@@ -60,8 +60,6 @@ fun calc1Map(data: Array<String>) {
         startNode.isBig = false
         val paths = mutableListOf<MutableList<Node>>()
         searchPath(startNode, paths)
-//        paths.forEach { path -> println(path) }
-
         println(paths.size)
     }
 }
@@ -74,7 +72,6 @@ fun searchPathHelp(
 ) {
     if (path.last().name != "end") {
         node.children.forEach { child ->
-//            if(node.name == "start" && child.name == "b")
             if (containsSmall(path, child)) {
                 val newPath = path.toMutableList()
                 newPath.add(child)
@@ -107,10 +104,6 @@ fun containsSmall(path: MutableList<Node>, child: Node): Boolean {
 fun hasTwice(path: MutableList<Node>): Boolean {
     val groupBy =
         path.filter { node -> !node.isBig && node.name != "start" && node.name != "end" }.groupBy { node -> node.name }
-
-//    if (list != null) {
-//        return list.size > 1
-//    }
 
     return groupBy.filter { group -> group.value.size > 1 }.isNotEmpty()
 }
