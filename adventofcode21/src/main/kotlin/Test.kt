@@ -7,8 +7,8 @@ import java.time.LocalDateTime
 import java.time.format.DateTimeFormatter
 import java.util.*
 
-fun mapCSV(fileName: String): MutableMap<String, Double> {
-    val map = mutableMapOf<String, Double>()
+fun mapCSV(fileName: String): MutableMap<String, MutableList<Double>> {
+    val map = mutableMapOf<String, MutableList<Double>>()
 
     val formatter = DateTimeFormatter.ofPattern(" dd MMM yyyy HH:mm", Locale.GERMAN)
     val formatter2 = DateTimeFormatter.ofPattern(" d MMM yyyy HH:mm", Locale.GERMAN)
@@ -25,11 +25,19 @@ fun mapCSV(fileName: String): MutableMap<String, Double> {
                 if (dateStr.length == 12) {
                     val dateTime = LocalDateTime.parse("$dateStr $timeStr", formatter)
                     val toString = dateTime.toString().split("T")[0]
-                    map[toString] = weight
+                    if (map[toString] == null) {
+                        map[toString] = mutableListOf(weight)
+                    } else {
+                        map[toString]?.add(weight)
+                    }
                 } else {
                     val dateTime = LocalDateTime.parse("$dateStr $timeStr", formatter2)
                     val toString = dateTime.toString().split("T")[0]
-                    map[toString] = weight
+                    if (map[toString] == null) {
+                        map[toString] = mutableListOf(weight)
+                    } else {
+                        map[toString]?.add(weight)
+                    }
                 }
             }
         }
@@ -49,7 +57,7 @@ fun main() {
     val days = Duration.between(startDate.atStartOfDay(), endDate.atStartOfDay()).toDays()
     val total = (startWeight - goalWeight) / days.toDouble()
 
-    val mapCSV = mapCSV("C:/Users/kroe/Downloads/Gewicht.csv")
+    val mapCSV = mapCSV("C:/Users/kroe/Downloads/Gewicht (1).csv")
 
     for (day in 0..days) {
         val plusDays = startDate.plusDays(day)
@@ -58,20 +66,11 @@ fun main() {
 
         if (mapCSV[plusDays.toString().split("T")[0]] != null) {
             val real = mapCSV[plusDays.toString().split("T")[0]]
-            println("$plusDays;$round;$real")
+            val min = real?.minByOrNull { it }
+            println("$plusDays;$round;$min")
         } else
             println("$plusDays;$round;")
     }
-
-
-    val list = mapCSV.toList().sortedBy { entry -> entry.first }
-
-
-//    list.forEach { entry ->
-//        val dateTime = LocalDateTime.ofInstant(Instant.ofEpochMilli(entry.first), TimeZone.getDefault().toZoneId())
-////        println( dateTime.format(formatter))
-//        println(entry.second)
-//    }
 
     println()
 }
